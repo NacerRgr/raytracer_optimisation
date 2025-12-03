@@ -1,10 +1,16 @@
 cmake_minimum_required(VERSION 3.5.0)
 project(raytracer VERSION 0.1.0 LANGUAGES C CXX)
 
+enable_testing()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable(raytracer main.cpp)
+
+# Give the main executable a clear name for tests to find
+set_property(TARGET raytracer PROPERTY OUTPUT_NAME "raytracer")
+
 
 target_include_directories(raytracer PUBLIC
                            "${PROJECT_BINARY_DIR}"
@@ -26,3 +32,29 @@ target_link_libraries(raytracer
                       lodepng
                       )
 
+# --- Testing ---
+# Fetch GoogleTest
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
+FetchContent_MakeAvailable(googletest)
+
+# Add test executable
+add_executable(
+  raytracer_tests
+  ./src/tests/e2e_tests.cpp
+)
+
+# Pass the location of the main executable to the tests
+target_compile_definitions(raytracer_tests PRIVATE
+    RAYTRACER_EXECUTABLE="$<TARGET_FILE:raytracer>"
+    PROJECT_SOURCE_DIR="${PROJECT_SOURCE_DIR}"
+)
+
+target_link_libraries(raytracer_tests PRIVATE gtest_main lodepng rayimage)
+
+include(GoogleTest)
+gtest_discover_tests(raytracer_tests)
+add_subdirectory(./src/tests)

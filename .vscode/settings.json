@@ -73,5 +73,7 @@
     "valarray": "cpp",
     "__tree": "cpp",
     "span": "cpp"
-  }
+  },
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "C_Cpp.default.compilerPath": "/usr/bin/g++"
 }
