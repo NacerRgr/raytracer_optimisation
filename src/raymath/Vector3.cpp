@@ -43,10 +43,18 @@ const Vector3 Vector3::operator*(double const &f) const
 
 const Vector3 Vector3::operator/(double const &f) const
 {
+  // Vector3 c;
+  // c.x = x / f;
+  // c.y = y / f;
+  // c.z = z / f;
+  // return c;
+
+ // OPTIMISATION : 1 division + 3 multiplications
+  double invF = 1.0 / f;
   Vector3 c;
-  c.x = x / f;
-  c.y = y / f;
-  c.z = z / f;
+  c.x = x * invF;
+  c.y = y * invF;
+  c.z = z * invF;
   return c;
 }
 
@@ -70,13 +78,28 @@ double Vector3::lengthSquared() const
 
 const Vector3 Vector3::normalize() const
 {
-  double length = this->length();
+  // double length = this->length();
 
-  if (length == 0)
+  // if (length == 0)
+  // {
+  //   return Vector3();
+  // }
+  // // return *this / length;
+  // // OPTIMISATION 1 : Multiplication au lieu de division
+  // double invLength = 1.0 / length;  // 1 seule division
+  // return *this * invLength; 
+
+  // optimisation 2 : Eviter le calcul de la racine carrée
+  double lengthSq = this->lengthSquared();
+  
+  if (lengthSq == 0)
   {
     return Vector3();
   }
-  return *this / length;
+  
+  // Approximation rapide de 1/sqrt(lengthSq)
+  double invLength = 1.0 / std::sqrt(lengthSq);
+  return *this * invLength;
 }
 
 double Vector3::dot(Vector3 const &vec) const
