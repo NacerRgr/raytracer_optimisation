@@ -24,8 +24,12 @@ Color PhongMaterial::render(Ray &r, Ray &camera, Intersection *intersection, Sce
 
   Color color = getAmbient(intersection) * scene->globalAmbient;
 
-  std::vector<Light *> lights = scene->getLights();
-  for (int i = 0; i < lights.size(); ++i)
+  // std::vector<Light *> lights = scene->getLights();
+  // optimization : get reference to avoid copy
+  const std::vector<Light *> &lights = scene->getLights();
+  // optimization: precompute size or cach size
+  const size_t lightCount = lights.size();
+  for (size_t i = 0; i < lightCount; ++i)
   {
     Light *light = lights[i];
 

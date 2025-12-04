@@ -37,11 +37,15 @@ void Scene::prepare()
     objects[i]->applyTransform();
   }
 }
-
-std::vector<Light *> Scene::getLights()
+// optimization : return reference to avoid copy
+const std::vector<Light *> &Scene::getLights()
 {
   return lights;
 }
+// std::vector<Light *> Scene::getLights()
+// {
+//   return lights;
+// }
 
 bool Scene::closestIntersection(Ray &r, Intersection &closest, CullingType culling)
 {
@@ -49,7 +53,10 @@ bool Scene::closestIntersection(Ray &r, Intersection &closest, CullingType culli
 
   double closestDistanceSquared = -1;
   Intersection closestInter;
-  for (int i = 0; i < objects.size(); ++i)
+  // optmization: precompute size
+  const size_t objectCount = objects.size();
+
+  for (size_t i = 0; i < objectCount; ++i)
   {
     if (objects[i]->intersects(r, intersection, culling))
     {
@@ -67,6 +74,12 @@ bool Scene::closestIntersection(Ray &r, Intersection &closest, CullingType culli
         closestDistanceSquared = distanceSquared;
         intersection.Distance = std::sqrt(distanceSquared);
         closestInter = intersection;
+
+        //  OPTIMISATION : Early exit
+        if (closestDistanceSquared < 0.0001)
+        {
+          break;
+        }
       }
     }
   }

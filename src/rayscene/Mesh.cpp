@@ -74,7 +74,10 @@ bool Mesh::intersects(Ray &r, Intersection &intersection, CullingType culling)
     /// double closestDistance = -1;
     double closestDistanceSquared = -1;
     Intersection closestInter;
-    for (int i = 0; i < triangles.size(); ++i)
+    // optmization: precompute size
+    const size_t triangleCount = triangles.size();
+
+    for (size_t i = 0; i < triangleCount; ++i)
     {
         if (triangles[i]->intersects(r, tInter, culling))
         {
@@ -86,6 +89,12 @@ bool Mesh::intersects(Ray &r, Intersection &intersection, CullingType culling)
                 closestDistanceSquared = distanceSquared;
                 intersection.Distance = sqrt(distanceSquared);
                 closestInter = tInter;
+
+                // OPTIMISATION : Early exit
+                if (closestDistanceSquared < 0.0001)
+                {
+                    break;
+                }
             }
         }
     }
