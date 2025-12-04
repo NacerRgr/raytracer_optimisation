@@ -107,3 +107,20 @@ bool Mesh::intersects(Ray &r, Intersection &intersection, CullingType culling)
     intersection = closestInter;
     return true;
 }
+
+void Mesh::calculateBoundingBox()
+{
+    // Start with inverse infinity
+    Vector3 minPt(INFINITY, INFINITY, INFINITY);
+    Vector3 maxPt(-INFINITY, -INFINITY, -INFINITY);
+
+    // Iterate through all triangles to find min/max
+    for (auto *triangle : triangles)
+    {
+        // Make sure triangle has calculated its bounding box
+        triangle->calculateBoundingBox();
+
+        // Expand mesh bounding box to include this triangle
+        boundingBox.subsume(triangle->boundingBox);
+    }
+}

@@ -3,6 +3,7 @@
 #include "Intersection.hpp"
 #include "Material.hpp"
 #include "../raymath/Transform.hpp"
+#include "../raymath/AABB.hpp"
 
 enum CullingType
 {
@@ -18,10 +19,12 @@ public:
   std::string name = "";
   Material *material = NULL;
   Transform transform;
+  AABB boundingBox;
 
   SceneObject();
   ~SceneObject();
 
   virtual void applyTransform();
   virtual bool intersects(Ray &r, Intersection &intersection, CullingType culling);
+  virtual void calculateBoundingBox();
 };

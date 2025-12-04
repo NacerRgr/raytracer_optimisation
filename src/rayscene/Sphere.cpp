@@ -77,8 +77,14 @@ bool Sphere::intersects(Ray &r, Intersection &intersection, CullingType culling)
   intersection.Mat = this->material;
   intersection.Normal = (P1 - center).normalize();
 
-  // Junk function!!
-  // countPrimes();
-
   return true;
+}
+
+void Sphere::calculateBoundingBox()
+{
+  // Sphere bounding box: center ± radius in all directions
+  Vector3 minPt = center - Vector3(radius, radius, radius);
+  Vector3 maxPt = center + Vector3(radius, radius, radius);
+
+  boundingBox = AABB(minPt, maxPt);
 }

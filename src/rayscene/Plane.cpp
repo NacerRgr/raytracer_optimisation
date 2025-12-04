@@ -32,3 +32,11 @@ bool Plane::intersects(Ray &r, Intersection &intersection, CullingType culling)
 
   return true;
 }
+
+void Plane::calculateBoundingBox()
+{
+  // Plane is infinite, use infinite bounding box
+  boundingBox = AABB(
+      Vector3(-INFINITY, -INFINITY, -INFINITY),
+      Vector3(INFINITY, INFINITY, INFINITY));
+}

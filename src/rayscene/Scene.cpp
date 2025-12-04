@@ -32,9 +32,15 @@ void Scene::addLight(Light *light)
 
 void Scene::prepare()
 {
+  // apply transformations
   for (int i = 0; i < objects.size(); ++i)
   {
     objects[i]->applyTransform();
+  }
+  // calculate bounding boxes after transforms
+  for (int i = 0; i < objects.size(); ++i)
+  {
+    objects[i]->calculateBoundingBox();
   }
 }
 // optimization : return reference to avoid copy
@@ -58,17 +64,19 @@ bool Scene::closestIntersection(Ray &r, Intersection &closest, CullingType culli
 
   for (size_t i = 0; i < objectCount; ++i)
   {
+
+    // Test bounding box beofre testing object
+    if (!objects[i]->boundingBox.intersects(r))
+    {
+      continue; // Ray misses bounding box, skip this object!
+    }
+
+    // if bounding box was hit, test actual object
     if (objects[i]->intersects(r, intersection, culling))
     {
 
-      // Optimisation : lenghthSquared au lieu de length
-      // intersection.Distance = (intersection.Position - r.GetPosition()).length();
       double distanceSquared = (intersection.Position - r.GetPosition()).lengthSquared();
-      // if (closestDistance < 0 || intersection.Distance < closestDistance)
-      // {
-      //   closestDistance = intersection.Distance;
-      //   closestInter = intersection;
-      // }
+
       if (closestDistanceSquared < 0 || distanceSquared < closestDistanceSquared)
       {
         closestDistanceSquared = distanceSquared;

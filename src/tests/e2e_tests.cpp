@@ -339,7 +339,7 @@ TEST(RaytracerE2E, RegularUseCase_Force_Failure_TwoSpheres)
 {
     const std::string scene_path = "/app/scenes/two-spheres-on-plane.json";
     const std::string output_path = "test_regular.png";
-    const std::string reference_path = "/app/src/tests/reference/iso-sphere-on-plane.png";
+    const std::string reference_path = "/app/src/tests/reference/iso-spheres-on-plane.png";
 
     std::cout << "\n=== TEST 1 : cas d'utilisation régulier ===" << std::endl;
 

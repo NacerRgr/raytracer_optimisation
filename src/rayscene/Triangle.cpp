@@ -82,3 +82,30 @@ bool Triangle::intersects(Ray &r, Intersection &intersection, CullingType cullin
 
   return true;
 }
+
+void Triangle::calculateBoundingBox()
+{
+  // Initialize with first vertex
+  Vector3 minPt = tA;
+  Vector3 maxPt = tA;
+
+  // Expand to include tB
+  minPt.x = std::min(minPt.x, tB.x);
+  minPt.y = std::min(minPt.y, tB.y);
+  minPt.z = std::min(minPt.z, tB.z);
+
+  maxPt.x = std::max(maxPt.x, tB.x);
+  maxPt.y = std::max(maxPt.y, tB.y);
+  maxPt.z = std::max(maxPt.z, tB.z);
+
+  // Expand to include tC
+  minPt.x = std::min(minPt.x, tC.x);
+  minPt.y = std::min(minPt.y, tC.y);
+  minPt.z = std::min(minPt.z, tC.z);
+
+  maxPt.x = std::max(maxPt.x, tC.x);
+  maxPt.y = std::max(maxPt.y, tC.y);
+  maxPt.z = std::max(maxPt.z, tC.z);
+
+  boundingBox = AABB(minPt, maxPt);
+}
