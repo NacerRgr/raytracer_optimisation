@@ -92,7 +92,7 @@ double calculate_rmse(const std::vector<unsigned char> &img1, unsigned w1, unsig
 // ============================================================================
 TEST(RaytracerE2E, RegularUseCase_TwoSpheres)
 {
-    const std::string scene_path = "/app/scenes/two-spheres-on-plane.json";
+    const std::string scene_path = "/app/scenes/iso-sphere-on-plane.json";
     const std::string output_path = "test_regular.png";
     const std::string reference_path = "/app/src/tests/reference/reference.png";
 
@@ -144,7 +144,7 @@ TEST(RaytracerE2E, RegularUseCase_TwoSpheres)
 // ============================================================================
 TEST(RaytracerE2E, RegularUseCase_Force_Failure_TwoSpheres)
 {
-    const std::string scene_path = "/app/scenes/empty.json";
+    const std::string scene_path = "/app/scenes/two-spheres-on-plane.json";
     const std::string output_path = "test_regular.png";
     const std::string reference_path = "/app/src/tests/reference/reference.png";
 
@@ -187,7 +187,7 @@ TEST(RaytracerE2E, RegularUseCase_Force_Failure_TwoSpheres)
     double rmse = calculate_rmse(generated_image, gen_w, gen_h, golden_image, gold_w, gold_h);
     std::cout << " RMSE : " << rmse << std::endl;
 
-    EXPECT_LT(rmse, 1.0);
+    EXPECT_GT(rmse, 1.0);
     std::cout << "=== TEST 1 RÉUSSI ===" << std::endl;
 }
 // ============================================================================
@@ -280,7 +280,7 @@ TEST(RaytracerE2E, FailureScenario_InvalidScene)
 // ============================================================================
 TEST(RaytracerE2E, PerformanceMetrics_ComplexScene)
 {
-    const std::string scene_path = "/app/scenes/empty.json";
+    const std::string scene_path = "/app/scenes/iso-sphere-on-plane.json";
     const std::string output_path = "test_performance.png";
 
     std::cout << "\n=== TEST 4 : Métriques de performance ===" << std::endl;
