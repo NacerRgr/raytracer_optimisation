@@ -19,7 +19,7 @@ public:
    */
   void subsume(AABB const &other);
 
-  bool intersects(Ray &r);
+  bool intersects(const Ray &r) const;
 
   friend std::ostream &operator<<(std::ostream &_stream, AABB const &box);
 };

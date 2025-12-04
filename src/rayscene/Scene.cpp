@@ -32,9 +32,12 @@ void Scene::addLight(Light *light)
 
 void Scene::prepare()
 {
-  for (int i = 0; i < objects.size(); ++i)
+  
+  const size_t size_objects = objects.size();
+  for (int i = 0; i <size_objects; ++i)
   {
     objects[i]->applyTransform();
+    objects[i]->calculateBoundingBox();
   }
 }
 // optimization : return reference to avoid copy
@@ -58,6 +61,12 @@ bool Scene::closestIntersection(Ray &r, Intersection &closest, CullingType culli
 
   for (size_t i = 0; i < objectCount; ++i)
   {
+    // OPTIMISATION AABB : Si le rayon ne touche pas la boîte englobante, on ignore l'objet.
+    if (!objects[i]->getBoundingBox().intersects(r))
+    {
+      continue;
+    }
+
     if (objects[i]->intersects(r, intersection, culling))
     {
 

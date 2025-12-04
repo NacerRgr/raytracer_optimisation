@@ -17,6 +17,12 @@ void Sphere::applyTransform()
   this->center = this->transform.apply(c);
 }
 
+void Sphere::calculateBoundingBox()
+{
+  Vector3 radiusVec(radius, radius, radius);
+  boundingBox = AABB(center - radiusVec, center + radiusVec);
+}
+
 void Sphere::countPrimes()
 {
   int prime_counter = 0;

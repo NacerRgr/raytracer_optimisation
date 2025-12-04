@@ -280,7 +280,7 @@ TEST(RaytracerE2E, FailureScenario_InvalidScene)
 // ============================================================================
 TEST(RaytracerE2E, PerformanceMetrics_ComplexScene)
 {
-    const std::string scene_path = "/app/scenes/iso-sphere-on-plane.json";
+    const std::string scene_path = "/app/scenes/monkey-on-plane.json";
     const std::string output_path = "test_performance.png";
 
     std::cout << "\n=== TEST 4 : Métriques de performance ===" << std::endl;

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 #include "Mesh.hpp"
 #include "../raymath/Vector3.hpp"
 #include "../objloader/OBJ_Loader.h"
@@ -64,6 +65,24 @@ void Mesh::applyTransform()
         triangles[i]->material = this->material;
         triangles[i]->transform = transform;
         triangles[i]->applyTransform();
+        triangles[i]->calculateBoundingBox();
+    }
+}
+
+void Mesh::calculateBoundingBox()
+{
+    if (triangles.empty())
+    {
+        return;
+    }
+
+    // Initialiser avec la boîte du premier triangle
+    boundingBox = triangles[0]->getBoundingBox();
+
+    // Agrandir la boîte pour inclure tous les autres triangles
+    for (size_t i = 1; i < triangles.size(); ++i)
+    {
+        boundingBox.subsume(triangles[i]->getBoundingBox());
     }
 }
 
