@@ -19,6 +19,19 @@ void Triangle::applyTransform()
   tC = this->transform.apply(C);
 }
 
+void Triangle::calculateBoundingBox()
+{
+  double minX = std::min({tA.x, tB.x, tC.x});
+  double minY = std::min({tA.y, tB.y, tC.y});
+  double minZ = std::min({tA.z, tB.z, tC.z});
+
+  double maxX = std::max({tA.x, tB.x, tC.x});
+  double maxY = std::max({tA.y, tB.y, tC.y});
+  double maxZ = std::max({tA.z, tB.z, tC.z});
+
+  boundingBox = AABB(Vector3(minX, minY, minZ), Vector3(maxX, maxY, maxZ));
+}
+
 bool Triangle::intersects(Ray &r, Intersection &intersection, CullingType culling)
 {
   Vector3 BA = tB - tA;

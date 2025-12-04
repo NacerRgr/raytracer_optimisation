@@ -3,6 +3,14 @@
 #include "Camera.hpp"
 #include "../raymath/Ray.hpp"
 
+// ============================================================================
+// EVALUATION 3: Threading Support
+// ============================================================================
+#ifdef USE_THREADING
+#include <thread>
+#include <vector>
+#endif
+
 struct RenderSegment
 {
 public:
@@ -73,6 +81,75 @@ void Camera::render(Image &image, Scene &scene)
 
   scene.prepare();
 
+// ============================================================================
+// EVALUATION 3: Multithreading Implementation
+// ============================================================================
+#ifdef USE_THREADING
+
+  // Get the number of hardware threads available
+  unsigned int nthreads = std::thread::hardware_concurrency();
+
+  // Fallback to 4 threads if hardware_concurrency returns 0
+  if (nthreads == 0)
+  {
+    nthreads = 4;
+  }
+
+  std::cout << "Rendering with " << nthreads << " threads..." << std::endl;
+
+  std::vector<std::thread> threads;
+  std::vector<RenderSegment *> segments;
+
+  // Calculate rows per thread
+  int rowsPerThread = image.height / nthreads;
+  int remainingRows = image.height % nthreads;
+
+  // Divide the image into segments
+  int currentRow = 0;
+  for (unsigned int i = 0; i < nthreads; ++i)
+  {
+    RenderSegment *seg = new RenderSegment();
+    seg->height = height;
+    seg->image = &image;
+    seg->scene = &scene;
+    seg->intervalX = intervalX;
+    seg->intervalY = intervalY;
+    seg->reflections = Reflections;
+    seg->rowMin = currentRow;
+
+    // Distribute remaining rows to first threads
+    int extraRow = (i < remainingRows) ? 1 : 0;
+    seg->rowMax = currentRow + rowsPerThread + extraRow;
+
+    currentRow = seg->rowMax;
+
+    segments.push_back(seg);
+
+    // Create and launch thread
+    threads.push_back(std::thread(renderSegment, seg));
+  }
+
+  // Wait for all threads to complete
+  for (auto &thread : threads)
+  {
+    thread.join();
+  }
+
+  // Clean up segments
+  for (auto *seg : segments)
+  {
+    delete seg;
+  }
+
+  std::cout << "Rendering complete!" << std::endl;
+
+#else
+
+  // ============================================================================
+  // Single-threaded rendering (original code)
+  // ============================================================================
+  std::cout << "Rendering with single thread..." << std::endl;
+
   RenderSegment *seg = new RenderSegment();
   seg->height = height;
   seg->image = &image;
@@ -83,6 +160,12 @@ void Camera::render(Image &image, Scene &scene)
   seg->rowMin = 0;
   seg->rowMax = image.height;
   renderSegment(seg);
+
+  delete seg;
+
+  std::cout << "Rendering complete!" << std::endl;
+
+#endif
 }
 
 std::ostream &operator<<(std::ostream &_stream, Camera &cam)

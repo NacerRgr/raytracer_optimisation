@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include "Scene.hpp"
 #include "Intersection.hpp"
 
@@ -31,38 +32,68 @@ void Scene::addLight(Light *light)
 
 void Scene::prepare()
 {
-  for (int i = 0; i < objects.size(); ++i)
+  
+  const size_t size_objects = objects.size();
+  for (int i = 0; i <size_objects; ++i)
   {
     objects[i]->applyTransform();
+    objects[i]->calculateBoundingBox();
   }
 }
-
-std::vector<Light *> Scene::getLights()
+// optimization : return reference to avoid copy
+const std::vector<Light *> &Scene::getLights()
 {
   return lights;
 }
+// std::vector<Light *> Scene::getLights()
+// {
+//   return lights;
+// }
 
 bool Scene::closestIntersection(Ray &r, Intersection &closest, CullingType culling)
 {
   Intersection intersection;
 
-  double closestDistance = -1;
+  double closestDistanceSquared = -1;
   Intersection closestInter;
-  for (int i = 0; i < objects.size(); ++i)
+  // optmization: precompute size
+  const size_t objectCount = objects.size();
+
+  for (size_t i = 0; i < objectCount; ++i)
   {
+    // OPTIMISATION AABB : Si le rayon ne touche pas la boîte englobante, on ignore l'objet.
+    if (!objects[i]->getBoundingBox().intersects(r))
+    {
+      continue;
+    }
+
     if (objects[i]->intersects(r, intersection, culling))
     {
 
-      intersection.Distance = (intersection.Position - r.GetPosition()).length();
-      if (closestDistance < 0 || intersection.Distance < closestDistance)
+      // Optimisation : lenghthSquared au lieu de length
+      // intersection.Distance = (intersection.Position - r.GetPosition()).length();
+      double distanceSquared = (intersection.Position - r.GetPosition()).lengthSquared();
+      // if (closestDistance < 0 || intersection.Distance < closestDistance)
+      // {
+      //   closestDistance = intersection.Distance;
+      //   closestInter = intersection;
+      // }
+      if (closestDistanceSquared < 0 || distanceSquared < closestDistanceSquared)
       {
-        closestDistance = intersection.Distance;
+        closestDistanceSquared = distanceSquared;
+        intersection.Distance = std::sqrt(distanceSquared);
         closestInter = intersection;
+
+        //  OPTIMISATION : Early exit
+        if (closestDistanceSquared < 0.0001)
+        {
+          break;
+        }
       }
     }
   }
   closest = closestInter;
-  return (closestDistance > -1);
+  return (closestDistanceSquared > -1);
 }
 
 Color Scene::raycast(Ray &r, Ray &camera, int castCount, int maxCastCount)

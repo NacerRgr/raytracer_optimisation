@@ -6,6 +6,26 @@ enable_testing()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# ============================================================================
+# EVALUATION 3: Threading Support - ADD THESE LINES
+# ============================================================================
+# Enable threading support
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
+# Compiler directive to enable/disable threading
+# Usage: cmake -DENABLE_THREADING=ON ..  (default: ON)
+#        cmake -DENABLE_THREADING=OFF ..
+option(ENABLE_THREADING "Enable multithreading" ON)
+
+if(ENABLE_THREADING)
+    add_compile_definitions(USE_THREADING)
+    message(STATUS "Threading: ENABLED")
+else()
+    message(STATUS "Threading: DISABLED")
+endif()
+# ============================================================================
+
 add_executable(raytracer main.cpp)
 
 # Give the main executable a clear name for tests to find
@@ -30,6 +50,7 @@ target_link_libraries(raytracer
                       raymath
                       rayimage
                       lodepng
+                      Threads::Threads  # ← ADD THIS LINE for threading
                       )
 
 # --- Testing ---

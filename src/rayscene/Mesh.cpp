@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 #include "Mesh.hpp"
 #include "../raymath/Vector3.hpp"
 #include "../objloader/OBJ_Loader.h"
@@ -64,6 +65,24 @@ void Mesh::applyTransform()
         triangles[i]->material = this->material;
         triangles[i]->transform = transform;
         triangles[i]->applyTransform();
+        triangles[i]->calculateBoundingBox();
+    }
+}
+
+void Mesh::calculateBoundingBox()
+{
+    if (triangles.empty())
+    {
+        return;
+    }
+
+    // Initialiser avec la boîte du premier triangle
+    boundingBox = triangles[0]->getBoundingBox();
+
+    // Agrandir la boîte pour inclure tous les autres triangles
+    for (size_t i = 1; i < triangles.size(); ++i)
+    {
+        boundingBox.subsume(triangles[i]->getBoundingBox());
     }
 }
 
@@ -71,23 +90,35 @@ bool Mesh::intersects(Ray &r, Intersection &intersection, CullingType culling)
 {
     Intersection tInter;
 
-    double closestDistance = -1;
+    /// double closestDistance = -1;
+    double closestDistanceSquared = -1;
     Intersection closestInter;
-    for (int i = 0; i < triangles.size(); ++i)
+    // optmization: precompute size
+    const size_t triangleCount = triangles.size();
+
+    for (size_t i = 0; i < triangleCount; ++i)
     {
         if (triangles[i]->intersects(r, tInter, culling))
         {
-
-            tInter.Distance = (tInter.Position - r.GetPosition()).length();
-            if (closestDistance < 0 || tInter.Distance < closestDistance)
+            // Optimisation : lenghth au lieu de lengthSquared
+            double distanceSquared = (tInter.Position - r.GetPosition()).lengthSquared();
+            // tInter.Distance = (tInter.Position - r.GetPosition()).length();
+            if (closestDistanceSquared < 0 || distanceSquared < closestDistanceSquared)
             {
-                closestDistance = tInter.Distance;
+                closestDistanceSquared = distanceSquared;
+                intersection.Distance = sqrt(distanceSquared);
                 closestInter = tInter;
+
+                // OPTIMISATION : Early exit
+                if (closestDistanceSquared < 0.0001)
+                {
+                    break;
+                }
             }
         }
     }
 
-    if (closestDistance < 0)
+    if (closestDistanceSquared < 0)
     {
         return false;
     }

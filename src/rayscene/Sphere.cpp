@@ -17,20 +17,28 @@ void Sphere::applyTransform()
   this->center = this->transform.apply(c);
 }
 
-void Sphere::countPrimes() {
- int prime_counter = 0;
- for(int n = 2 ; n<1000 ; n++)
+void Sphere::calculateBoundingBox()
+{
+  Vector3 radiusVec(radius, radius, radius);
+  boundingBox = AABB(center - radiusVec, center + radiusVec);
+}
+
+void Sphere::countPrimes()
+{
+  int prime_counter = 0;
+  for (int n = 2; n < 1000; n++)
   {
     int count = 0;
-    for (int i = 2; i <= i/2; i++)
+    for (int i = 2; i <= i / 2; i++)
     {
-      if(n%i == 0) {
+      if (n % i == 0)
+      {
         count++;
       }
-      if(count == 0)
+      if (count == 0)
       {
         prime_counter++;
-      }  
+      }
     }
   }
 }
@@ -55,11 +63,15 @@ bool Sphere::intersects(Ray &r, Intersection &intersection, CullingType culling)
 
   // Is the length of CP greater than the radius of the circle ? If yes, no intersection!
   Vector3 CP = P - center;
-  double distance = CP.length();
-  if (distance > radius)
+  // Optimization
+  // double distance = CP.length();
+  double distanceSquared = CP.lengthSquared();
+
+  if (distanceSquared > radius * radius)
   {
     return false;
   }
+  double distance = sqrt(distanceSquared);
 
   // Calculate the exact point of collision: P1
   double a = sqrt(radius * radius - distance * distance);
@@ -72,7 +84,7 @@ bool Sphere::intersects(Ray &r, Intersection &intersection, CullingType culling)
   intersection.Normal = (P1 - center).normalize();
 
   // Junk function!!
-  countPrimes();
+  // countPrimes();
 
   return true;
 }

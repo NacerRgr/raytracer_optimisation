@@ -15,7 +15,7 @@ Ray::~Ray()
 {
 }
 
-Vector3 Ray::GetPosition()
+Vector3 Ray::GetPosition() const
 {
   return position;
 }
@@ -25,7 +25,7 @@ void Ray::SetPosition(Vector3 &pos)
   position = pos;
 }
 
-Vector3 Ray::GetDirection()
+Vector3 Ray::GetDirection() const
 {
   return direction;
 }

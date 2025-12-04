@@ -25,7 +25,7 @@ void AABB::subsume(AABB const &other)
     Max.z = std::max(Max.z, other.Max.z);
 }
 
-bool AABB::intersects(Ray &r)
+bool AABB::intersects(const Ray &r) const
 {
     /**
      * Optimised implementation of ray-AABB intersection, taken from: https://tavianator.com/2011/ray_box.html
