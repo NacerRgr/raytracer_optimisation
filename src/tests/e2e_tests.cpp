@@ -92,9 +92,9 @@ double calculate_rmse(const std::vector<unsigned char> &img1, unsigned w1, unsig
 // ============================================================================
 TEST(RaytracerE2E, RegularUseCase_TwoSpheres)
 {
-    const std::string scene_path = "/app/scenes/iso-sphere-on-plane.json";
+    const std::string scene_path = "/app/scenes/two-spheres-on-plane.json";
     const std::string output_path = "test_regular.png";
-    const std::string reference_path = "/app/src/tests/reference/reference.png";
+    const std::string reference_path = "/app/src/tests/reference/two-spheres-on-plane.png";
 
     std::cout << "\n=== TEST 1 : cas d'utilisation régulier ===" << std::endl;
 
@@ -139,6 +139,199 @@ TEST(RaytracerE2E, RegularUseCase_TwoSpheres)
     std::cout << "=== TEST 1 RÉUSSI ===" << std::endl;
 }
 
+TEST(RaytracerE2E, RegularUseCase_TwoTriangles)
+{
+    const std::string scene_path = "/app/scenes/two-triangles-on-plane.json";
+    const std::string output_path = "test_regular.png";
+    const std::string reference_path = "/app/src/tests/reference/two-triangles-on-plane.png";
+
+    std::cout << "\n=== TEST 1 : cas d'utilisation régulier ===" << std::endl;
+
+    // run le raytracer
+    double exec_time = runRaytracer(scene_path, output_path);
+    std::cout << "Temps d'exécution : " << exec_time << " secondes" << std::endl;
+
+    // Charger l'image genere par le raytracer
+    std::vector<unsigned char> generated_image;
+    unsigned gen_w, gen_h;
+    ASSERT_TRUE(loadImage(output_path, generated_image, gen_w, gen_h))
+        << "Failed to load generated image";
+
+    std::cout << "Image générée : " << gen_w << "x" << gen_h << " pixels" << std::endl;
+
+    // Vérifier dimensions
+    EXPECT_GT(gen_w, 0);
+    EXPECT_GT(gen_h, 0);
+
+    // Vérifier pixels colorés
+    bool has_non_black_pixels = false;
+    for (size_t i = 0; i < generated_image.size(); i += 4)
+    {
+        if (generated_image[i] > 0 || generated_image[i + 1] > 0 || generated_image[i + 2] > 0)
+        {
+            has_non_black_pixels = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(has_non_black_pixels);
+    std::cout << "L'image contient des pixels colorés" << std::endl;
+
+    // Comparer avec golden image
+    std::vector<unsigned char> golden_image;
+    unsigned gold_w, gold_h;
+    ASSERT_TRUE(loadImage(reference_path, golden_image, gold_w, gold_h));
+
+    double rmse = calculate_rmse(generated_image, gen_w, gen_h, golden_image, gold_w, gold_h);
+    std::cout << " RMSE : " << rmse << std::endl;
+
+    EXPECT_LT(rmse, 1.0);
+    std::cout << "=== TEST 1 RÉUSSI ===" << std::endl;
+}
+TEST(RaytracerE2E, RegularUseCase_IsoSphere)
+{
+    const std::string scene_path = "/app/scenes/iso-sphere-on-plane.json";
+    const std::string output_path = "test_regular.png";
+    const std::string reference_path = "/app/src/tests/reference/iso-sphere-on-plane.png";
+
+    std::cout << "\n=== TEST 1 : cas d'utilisation régulier ===" << std::endl;
+
+    // run le raytracer
+    double exec_time = runRaytracer(scene_path, output_path);
+    std::cout << "Temps d'exécution : " << exec_time << " secondes" << std::endl;
+
+    // Charger l'image genere par le raytracer
+    std::vector<unsigned char> generated_image;
+    unsigned gen_w, gen_h;
+    ASSERT_TRUE(loadImage(output_path, generated_image, gen_w, gen_h))
+        << "Failed to load generated image";
+
+    std::cout << "Image générée : " << gen_w << "x" << gen_h << " pixels" << std::endl;
+
+    // Vérifier dimensions
+    EXPECT_GT(gen_w, 0);
+    EXPECT_GT(gen_h, 0);
+
+    // Vérifier pixels colorés
+    bool has_non_black_pixels = false;
+    for (size_t i = 0; i < generated_image.size(); i += 4)
+    {
+        if (generated_image[i] > 0 || generated_image[i + 1] > 0 || generated_image[i + 2] > 0)
+        {
+            has_non_black_pixels = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(has_non_black_pixels);
+    std::cout << "L'image contient des pixels colorés" << std::endl;
+
+    // Comparer avec golden image
+    std::vector<unsigned char> golden_image;
+    unsigned gold_w, gold_h;
+    ASSERT_TRUE(loadImage(reference_path, golden_image, gold_w, gold_h));
+
+    double rmse = calculate_rmse(generated_image, gen_w, gen_h, golden_image, gold_w, gold_h);
+    std::cout << " RMSE : " << rmse << std::endl;
+
+    EXPECT_LT(rmse, 1.0);
+    std::cout << "=== TEST 1 RÉUSSI ===" << std::endl;
+}
+TEST(RaytracerE2E, RegularUseCase_SphereGalaxyOnPlane)
+{
+    const std::string scene_path = "/app/scenes/sphere-galaxy-on-plane.json";
+    const std::string output_path = "test_regular.png";
+    const std::string reference_path = "/app/src/tests/reference/sphere-galaxy-on-plane.png";
+
+    std::cout << "\n=== TEST 1 : cas d'utilisation régulier ===" << std::endl;
+
+    // run le raytracer
+    double exec_time = runRaytracer(scene_path, output_path);
+    std::cout << "Temps d'exécution : " << exec_time << " secondes" << std::endl;
+
+    // Charger l'image genere par le raytracer
+    std::vector<unsigned char> generated_image;
+    unsigned gen_w, gen_h;
+    ASSERT_TRUE(loadImage(output_path, generated_image, gen_w, gen_h))
+        << "Failed to load generated image";
+
+    std::cout << "Image générée : " << gen_w << "x" << gen_h << " pixels" << std::endl;
+
+    // Vérifier dimensions
+    EXPECT_GT(gen_w, 0);
+    EXPECT_GT(gen_h, 0);
+
+    // Vérifier pixels colorés
+    bool has_non_black_pixels = false;
+    for (size_t i = 0; i < generated_image.size(); i += 4)
+    {
+        if (generated_image[i] > 0 || generated_image[i + 1] > 0 || generated_image[i + 2] > 0)
+        {
+            has_non_black_pixels = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(has_non_black_pixels);
+    std::cout << "L'image contient des pixels colorés" << std::endl;
+
+    // Comparer avec golden image
+    std::vector<unsigned char> golden_image;
+    unsigned gold_w, gold_h;
+    ASSERT_TRUE(loadImage(reference_path, golden_image, gold_w, gold_h));
+
+    double rmse = calculate_rmse(generated_image, gen_w, gen_h, golden_image, gold_w, gold_h);
+    std::cout << " RMSE : " << rmse << std::endl;
+
+    EXPECT_LT(rmse, 1.0);
+    std::cout << "=== TEST 1 RÉUSSI ===" << std::endl;
+}
+
+TEST(RaytracerE2E, RegularUseCase_MonkeyOnPlane)
+{
+    const std::string scene_path = "/app/scenes/monkey-on-plane.json";
+    const std::string output_path = "test_regular.png";
+    const std::string reference_path = "/app/src/tests/reference/monkey-on-plane.png";
+
+    std::cout << "\n=== TEST 1 : cas d'utilisation régulier ===" << std::endl;
+
+    // run le raytracer
+    double exec_time = runRaytracer(scene_path, output_path);
+    std::cout << "Temps d'exécution : " << exec_time << " secondes" << std::endl;
+
+    // Charger l'image genere par le raytracer
+    std::vector<unsigned char> generated_image;
+    unsigned gen_w, gen_h;
+    ASSERT_TRUE(loadImage(output_path, generated_image, gen_w, gen_h))
+        << "Failed to load generated image";
+
+    std::cout << "Image générée : " << gen_w << "x" << gen_h << " pixels" << std::endl;
+
+    // Vérifier dimensions
+    EXPECT_GT(gen_w, 0);
+    EXPECT_GT(gen_h, 0);
+
+    // Vérifier pixels colorés
+    bool has_non_black_pixels = false;
+    for (size_t i = 0; i < generated_image.size(); i += 4)
+    {
+        if (generated_image[i] > 0 || generated_image[i + 1] > 0 || generated_image[i + 2] > 0)
+        {
+            has_non_black_pixels = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(has_non_black_pixels);
+    std::cout << "L'image contient des pixels colorés" << std::endl;
+
+    // Comparer avec golden image
+    std::vector<unsigned char> golden_image;
+    unsigned gold_w, gold_h;
+    ASSERT_TRUE(loadImage(reference_path, golden_image, gold_w, gold_h));
+
+    double rmse = calculate_rmse(generated_image, gen_w, gen_h, golden_image, gold_w, gold_h);
+    std::cout << " RMSE : " << rmse << std::endl;
+
+    EXPECT_LT(rmse, 1.0);
+    std::cout << "=== TEST 1 RÉUSSI ===" << std::endl;
+}
 // ============================================================================
 // TEST 1 : Cas d'utilisation régulier
 // ============================================================================
@@ -146,7 +339,7 @@ TEST(RaytracerE2E, RegularUseCase_Force_Failure_TwoSpheres)
 {
     const std::string scene_path = "/app/scenes/two-spheres-on-plane.json";
     const std::string output_path = "test_regular.png";
-    const std::string reference_path = "/app/src/tests/reference/reference.png";
+    const std::string reference_path = "/app/src/tests/reference/iso-sphere-on-plane.png";
 
     std::cout << "\n=== TEST 1 : cas d'utilisation régulier ===" << std::endl;
 

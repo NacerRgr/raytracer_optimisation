@@ -3,9 +3,7 @@
 #include "Camera.hpp"
 #include "../raymath/Ray.hpp"
 
-// ============================================================================
 // EVALUATION 3: Threading Support
-// ============================================================================
 #ifdef USE_THREADING
 #include <thread>
 #include <vector>
@@ -81,9 +79,8 @@ void Camera::render(Image &image, Scene &scene)
 
   scene.prepare();
 
-// ============================================================================
-// EVALUATION 3: Multithreading Implementation
-// ============================================================================
+  // Multithreading Implementation
+
 #ifdef USE_THREADING
 
   // Get the number of hardware threads available
@@ -145,9 +142,8 @@ void Camera::render(Image &image, Scene &scene)
 
 #else
 
-  // ============================================================================
   // Single-threaded rendering (original code)
-  // ============================================================================
+
   std::cout << "Rendering with single thread..." << std::endl;
 
   RenderSegment *seg = new RenderSegment();
