@@ -64,6 +64,11 @@ void Transform::setMatrix()
   this->matrix = mpos * mrot;
 }
 
+Vector3 Transform::getPosition() const
+{
+  return this->position;
+}
+
 void Transform::setPosition(Vector3 const &pos)
 {
   this->position = pos;

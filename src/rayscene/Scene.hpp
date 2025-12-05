@@ -5,12 +5,16 @@
 #include "../raymath/Color.hpp"
 #include "Light.hpp"
 #include "SceneObject.hpp"
+#include "BSPTree.hpp"
 
 class Scene
 {
 private:
   std::vector<SceneObject *> objects;
   std::vector<Light *> lights;
+  // BSP Tree for spatial optimization
+  BSPTree *bspTree;
+  bool useBSP;
 
 public:
   Scene();
@@ -27,4 +31,6 @@ public:
   Color raycast(Ray &r, Ray &camera, int castCount, int maxCastCount);
 
   bool closestIntersection(Ray &r, Intersection &closest, CullingType culling);
+  // Enable/disable BSP tree optimization
+  void enableBSP(bool enable);
 };

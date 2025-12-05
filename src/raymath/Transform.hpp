@@ -16,6 +16,7 @@ public:
   Transform();
   ~Transform();
 
+  Vector3 getPosition() const;
   void setPosition(Vector3 const &pos);
   void setRotation(Vector3 const &rot);
 

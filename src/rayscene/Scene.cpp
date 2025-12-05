@@ -2,8 +2,9 @@
 #include <cmath>
 #include "Scene.hpp"
 #include "Intersection.hpp"
+#include "BSPTree.hpp"
 
-Scene::Scene()
+Scene::Scene() : bspTree(nullptr), useBSP(false)
 {
 }
 
@@ -18,6 +19,11 @@ Scene::~Scene()
   {
     delete lights[i];
   }
+  // Delete BSP tree
+  if (bspTree != nullptr)
+  {
+    delete bspTree;
+  }
 }
 
 void Scene::add(SceneObject *object)
@@ -28,6 +34,21 @@ void Scene::add(SceneObject *object)
 void Scene::addLight(Light *light)
 {
   lights.push_back(light);
+}
+
+// enable or disable BSP tree optimization
+void Scene::enableBSP(bool enable)
+{
+  useBSP = enable;
+
+  if (enable)
+  {
+    std::cout << "BSP Tree: ENABLED" << std::endl;
+  }
+  else
+  {
+    std::cout << "BSP Tree: DISABLED" << std::endl;
+  }
 }
 
 void Scene::prepare()
@@ -42,16 +63,24 @@ void Scene::prepare()
   {
     objects[i]->calculateBoundingBox();
   }
+
+  //  build BSP tree if enabled
+  if (useBSP)
+  {
+    if (bspTree != nullptr)
+    {
+      delete bspTree;
+    }
+
+    bspTree = new BSPTree();
+    bspTree->build(objects);
+  }
 }
-// optimization : return reference to avoid copy
+
 const std::vector<Light *> &Scene::getLights()
 {
   return lights;
 }
-// std::vector<Light *> Scene::getLights()
-// {
-//   return lights;
-// }
 
 bool Scene::closestIntersection(Ray &r, Intersection &closest, CullingType culling)
 {
@@ -59,9 +88,20 @@ bool Scene::closestIntersection(Ray &r, Intersection &closest, CullingType culli
 
   double closestDistanceSquared = -1;
   Intersection closestInter;
-  // optmization: precompute size
   const size_t objectCount = objects.size();
 
+  // BSP optimization
+  std::vector<SceneObject *> candidateObjects;
+  if (useBSP && bspTree != nullptr && bspTree->isBuilt())
+  {
+    // Use BSP tree to get candidate objects
+    bspTree->findIntersections(r, candidateObjects);
+  }
+  else
+  {
+    // Use all objects (linear search)
+    candidateObjects = objects;
+  }
   for (size_t i = 0; i < objectCount; ++i)
   {
 

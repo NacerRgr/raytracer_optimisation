@@ -20,6 +20,20 @@ else()
 endif()
 # ============================================================================
 
+# ============================================================================
+# EVALUATION 5: BSP Tree Support
+# ============================================================================
+option(ENABLE_BSP "Enable BSP tree optimization" ON)
+
+if(ENABLE_BSP)
+    add_compile_definitions(USE_BSP)
+    message(STATUS "BSP Tree: ENABLED")
+else()
+    message(STATUS "BSP Tree: DISABLED")
+endif()
+# ============================================================================
+
+
 add_executable(raytracer main.cpp)
 
 # Give the main executable a clear name for tests to find

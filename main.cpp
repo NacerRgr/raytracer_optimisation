@@ -26,6 +26,13 @@ int main(int argc, char *argv[])
     outpath = argv[2];
   }
 
+  //  enable/disable BSP Tree based on compile-time flag
+#ifdef USE_BSP
+  scene->enableBSP(true); // BSP tree enabled
+#else
+  scene->enableBSP(false); // BSP tree disabled
+#endif
+
   std::cout << "Rendering " << image->width << "x" << image->height << " pixels..." << std::endl;
 
   auto begin = std::chrono::high_resolution_clock::now();
