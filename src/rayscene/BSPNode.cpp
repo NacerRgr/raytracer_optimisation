@@ -92,27 +92,44 @@ void BSPNode::calculateBoundingBox(std::vector<SceneObject *> &objs)
 
 int BSPNode::chooseSplitAxis(std::vector<SceneObject *> &objs)
 {
-    // Simple strategy: choose axis where bounding box is largest
-    // This tends to create more balanced splits
-
-    // Calculate bounding box extent on each axis
+    // Calculate extent on each axis
     Vector3 minPt(INFINITY, INFINITY, INFINITY);
     Vector3 maxPt(-INFINITY, -INFINITY, -INFINITY);
 
     for (auto *obj : objs)
     {
-        // Get object's bounding box corners
-        // (We need to access AABB min/max - for now use boundingBox as is)
-        // Note: This is simplified - ideally AABB would expose min/max
+        // Get min/max from object's bounding box
+        Vector3 objMin = obj->boundingBox.getMin();
+        Vector3 objMax = obj->boundingBox.getMax();
+
+        // Expand to include this object
+        minPt.x = std::min(minPt.x, objMin.x);
+        minPt.y = std::min(minPt.y, objMin.y);
+        minPt.z = std::min(minPt.z, objMin.z);
+
+        maxPt.x = std::max(maxPt.x, objMax.x);
+        maxPt.y = std::max(maxPt.y, objMax.y);
+        maxPt.z = std::max(maxPt.z, objMax.z);
     }
 
-    // For simplicity, just cycle through axes
-    // More sophisticated: choose axis with largest extent
-    static int axisCounter = 0;
-    int axis = axisCounter % 3;
-    axisCounter++;
+    // Calculate extent on each axis
+    double extentX = maxPt.x - minPt.x;
+    double extentY = maxPt.y - minPt.y;
+    double extentZ = maxPt.z - minPt.z;
 
-    return axis;
+    // Choose axis with largest extent
+    if (extentX >= extentY && extentX >= extentZ)
+    {
+        return 0; // Split on X axis
+    }
+    else if (extentY >= extentZ)
+    {
+        return 1; // Split on Y axis
+    }
+    else
+    {
+        return 2; // Split on Z axis
+    }
 }
 
 void BSPNode::partition(std::vector<SceneObject *> &objs, int axis,
@@ -126,7 +143,6 @@ void BSPNode::partition(std::vector<SceneObject *> &objs, int axis,
     for (auto *obj : objs)
     {
         // Get center of object's bounding box on the split axis
-        // Simplified: assume boundingBox has getCenter() method
         // For now, estimate from transformation
         Vector3 center = obj->transform.getPosition();
 

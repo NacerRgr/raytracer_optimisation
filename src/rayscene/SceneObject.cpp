@@ -22,8 +22,7 @@ void SceneObject::applyTransform()
 
 void SceneObject::calculateBoundingBox()
 {
-  // Default implementation: infinite bounding box
-  // This will be overridden by specific object types
+  // default implementation that This will be overridden by specific object types
   boundingBox = AABB(
       Vector3(-INFINITY, -INFINITY, -INFINITY),
       Vector3(INFINITY, INFINITY, INFINITY));

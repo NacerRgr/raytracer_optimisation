@@ -58,7 +58,7 @@ void Scene::prepare()
   {
     objects[i]->applyTransform();
   }
-  // calculate bounding boxes after transforms
+  // // calculate bounding boxes after transforms
   for (int i = 0; i < objects.size(); ++i)
   {
     objects[i]->calculateBoundingBox();
@@ -108,7 +108,7 @@ bool Scene::closestIntersection(Ray &r, Intersection &closest, CullingType culli
     // Test bounding box beofre testing object
     if (!objects[i]->boundingBox.intersects(r))
     {
-      continue; // Ray misses bounding box, skip this object!
+      continue; // Ray misses bounding box so skip
     }
 
     // if bounding box was hit, test actual object
